@@ -2,8 +2,6 @@
 
 namespace App\Controller\ApiController;
 
-use App\DTO\ProductsDTO;
-use App\Entity\Products;
 use App\Repository\ProductsRepository;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
