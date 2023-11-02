@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\ProductsRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=ProductsRepository::class)
@@ -14,58 +15,69 @@ class Products
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"get_products", "get_new_product"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=64)
+     * @Groups({"get_products", "get_new_product"})
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"get_products", "get_new_product"})
      */
     private $poster;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"get_products", "get_new_product"})
      */
     private $description;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"get_products", "get_new_product"})
      */
     private $matiere;
 
     /**
      * @ORM\Column(type="float")
+     * @Groups({"get_products"})
      */
     private $price;
 
     /**
      * @ORM\Column(type="boolean")
+     * @Groups({"get_products"})
      */
     private $news;
 
     /**
      * @ORM\Column(type="integer")
+     * @Groups({"get_products"})
      */
     private $stock;
 
     /**
      * @ORM\ManyToOne(targetEntity=Category::class, inversedBy="products")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({"get_products"})
      */
     private $category;
 
     /**
      * @ORM\ManyToOne(targetEntity=SubCategory::class, inversedBy="products")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({"get_products"})
      */
     private $subcategory;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"get_products"})
      */
     private $slug;
 

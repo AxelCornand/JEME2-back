@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\SubCategoryRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -21,6 +22,7 @@ class SubCategory
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"get_products"})
      */
     private $name;
 
