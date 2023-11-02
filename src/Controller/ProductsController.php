@@ -4,11 +4,12 @@ namespace App\Controller;
 
 use App\Entity\Products;
 use App\Form\ProductsType;
+use App\Service\MySlugger;
 use App\Repository\ProductsRepository;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 /**
  * @Route("/products")
@@ -28,13 +29,14 @@ class ProductsController extends AbstractController
     /**
      * @Route("/new", name="app_products_new", methods={"GET", "POST"})
      */
-    public function new(Request $request, ProductsRepository $productsRepository): Response
+    public function new(Request $request, ProductsRepository $productsRepository, MySlugger $mySlugger): Response
     {
         $product = new Products();
         $form = $this->createForm(ProductsType::class, $product);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $product->setSlug($mySlugger->slugify($product->getName()));
             $productsRepository->add($product, true);
 
             return $this->redirectToRoute('app_products_index', [], Response::HTTP_SEE_OTHER);
@@ -59,12 +61,13 @@ class ProductsController extends AbstractController
     /**
      * @Route("/{id}/edit", name="app_products_edit", methods={"GET", "POST"})
      */
-    public function edit(Request $request, Products $product, ProductsRepository $productsRepository): Response
+    public function edit(Request $request, Products $product, ProductsRepository $productsRepository, MySlugger $mySlugger): Response
     {
         $form = $this->createForm(ProductsType::class, $product);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $product->setSlug($mySlugger->slugify($product->getName()));
             $productsRepository->add($product, true);
 
             return $this->redirectToRoute('app_products_index', [], Response::HTTP_SEE_OTHER);
