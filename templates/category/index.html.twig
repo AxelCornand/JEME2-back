@@ -3,8 +3,9 @@
 {% block title %}Category index{% endblock %}
 
 {% block body %}
+<div class="container">
     <h1>Category index</h1>
-
+    <a href="{{ path('app_category_new') }}" class="btn btn-sm btn-success">Créer une catégorie</a>
     <table class="table">
         <thead>
             <tr>
@@ -19,8 +20,9 @@
                 <td>{{ category.id }}</td>
                 <td>{{ category.name }}</td>
                 <td>
-                    <a href="{{ path('app_category_show', {'id': category.id}) }}">show</a>
-                    <a href="{{ path('app_category_edit', {'id': category.id}) }}">edit</a>
+                    <a href="{{ path('app_category_show', {'id': category.id}) }}" class="btn btn-sm btn-primary">show</a>
+                    <a href="{{ path('app_category_edit', {'id': category.id}) }}" class="btn btn-sm btn-warning">edit</a>
+                    <a href="{{ path('app_category_delete', {'id': category.id}) }}" class="btn btn-sm btn-trash"></a>
                 </td>
             </tr>
         {% else %}

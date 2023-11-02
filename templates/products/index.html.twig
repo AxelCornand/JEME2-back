@@ -1,10 +1,11 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Products index{% endblock %}
+{% block title %}Page Produits{% endblock %}
 
 {% block body %}
-    <h1>Products index</h1>
-
+<div class="container">
+    <h1>Produits</h1>
+    <a href="{{ path('app_products_new') }}" class="btn btn-sm btn-success">Créer un produit</a>
     <table class="table">
         <thead>
             <tr>
@@ -24,15 +25,16 @@
             <tr>
                 <td>{{ product.id }}</td>
                 <td>{{ product.name }}</td>
-                <td>{{ product.poster }}</td>
+                <td><img src="{{ product.poster }}" width="200px" height="150px"</td>
                 <td>{{ product.description }}</td>
                 <td>{{ product.matiere }}</td>
                 <td>{{ product.price }}</td>
                 <td>{{ product.news ? 'Yes' : 'No' }}</td>
                 <td>{{ product.stock }}</td>
                 <td>
-                    <a href="{{ path('app_products_show', {'id': product.id}) }}">show</a>
-                    <a href="{{ path('app_products_edit', {'id': product.id}) }}">edit</a>
+                    <a href="{{ path('app_products_show', {'id': product.id}) }}" class="btn btn-sm btn-primary">show</a>
+                    <a href="{{ path('app_products_edit', {'id': product.id}) }}" class="btn btn-sm btn-warning">edit</a>
+                    <a href="{{ path('app_products_delete', {'id': product.id}) }}" class="btn btn-sm btn-trash"></a>
                 </td>
             </tr>
         {% else %}
@@ -42,6 +44,4 @@
         {% endfor %}
         </tbody>
     </table>
-
-    <a href="{{ path('app_products_new') }}">Create new</a>
 {% endblock %}

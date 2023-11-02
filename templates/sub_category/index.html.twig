@@ -3,8 +3,9 @@
 {% block title %}SubCategory index{% endblock %}
 
 {% block body %}
+<div class="container">
     <h1>SubCategory index</h1>
-
+    <a href="{{ path('app_sub_category_new') }}" class="btn btn-sm btn-success">Créer une sous-catégorie</a>
     <table class="table">
         <thead>
             <tr>
@@ -19,8 +20,9 @@
                 <td>{{ sub_category.id }}</td>
                 <td>{{ sub_category.name }}</td>
                 <td>
-                    <a href="{{ path('app_sub_category_show', {'id': sub_category.id}) }}">show</a>
-                    <a href="{{ path('app_sub_category_edit', {'id': sub_category.id}) }}">edit</a>
+                    <a href="{{ path('app_sub_category_show', {'id': sub_category.id}) }}" class="btn btn-sm btn-primary">show</a>
+                    <a href="{{ path('app_sub_category_edit', {'id': sub_category.id}) }}" class="btn btn-sm btn-warning">edit</a>
+                    <a href="{{ path('app_sub_category_delete', {'id': sub_category.id}) }}" class="btn btn-sm btn-trash"></a>
                 </td>
             </tr>
         {% else %}
@@ -31,5 +33,5 @@
         </tbody>
     </table>
 
-    <a href="{{ path('app_sub_category_new') }}">Create new</a>
+    </div>
 {% endblock %}
