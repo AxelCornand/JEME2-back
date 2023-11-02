@@ -37,7 +37,7 @@ class ProductsController extends AbstractController {
     }
 
     /**
-     * @Route("newProducts", name="new_product", methods={"GET"})
+     * @Route("newProductsList", name="new_product", methods={"GET"})
      */
     public function newProductsJson(ProductsRepository $productsRepository): Response
     {
