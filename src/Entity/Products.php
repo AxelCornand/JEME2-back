@@ -15,25 +15,25 @@ class Products
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"get_products"})
+     * @Groups({"get_products","get_cart"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=64)
-     * @Groups({"get_products"})
+     * @Groups({"get_products","get_cart"})
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"get_products"})
+     * @Groups({"get_products","get_cart"})
      */
     private $poster;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"get_products"})
+     * @Groups({"get_products","get_cart"})
      */
     private $description;
 
@@ -45,7 +45,7 @@ class Products
 
     /**
      * @ORM\Column(type="float")
-     * @Groups({"get_products"})
+     * @Groups({"get_products","get_cart"})
      */
     private $price;
 
