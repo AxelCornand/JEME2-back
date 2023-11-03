@@ -40,6 +40,11 @@ class ProductsController extends AbstractController {
     public function newProductsJson(ProductsRepository $productsRepository): Response
     {
         $newProductsList = $productsRepository->findBy(['news'=> true]);
-        return $this->json($newProductsList);
+        return $this->json(
+            $newProductsList,
+            200,
+            [],
+            ['groups' => 'get_products']
+        );
     }
 }

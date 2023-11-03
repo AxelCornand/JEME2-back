@@ -15,31 +15,31 @@ class Products
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"get_products", "get_new_product"})
+     * @Groups({"get_products"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=64)
-     * @Groups({"get_products", "get_new_product"})
+     * @Groups({"get_products"})
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"get_products", "get_new_product"})
+     * @Groups({"get_products"})
      */
     private $poster;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"get_products", "get_new_product"})
+     * @Groups({"get_products"})
      */
     private $description;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"get_products", "get_new_product"})
+     * @Groups({"get_products"})
      */
     private $matiere;
 
