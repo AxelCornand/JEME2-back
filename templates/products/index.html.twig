@@ -13,6 +13,7 @@
                 <th>Name</th>
                 <th>Poster</th>
                 <th>Description</th>
+                <th>Category</th>
                 <th>Matiere</th>
                 <th>Price</th>
                 <th>News</th>
@@ -28,6 +29,7 @@
                 <td>{{ product.name }}</td>
                 <td><img src="{{ product.poster }}" width="200px" height="150px"</td>
                 <td>{{ product.description }}</td>
+                <td>{{ product.category.name }}</td>
                 <td>{{ product.matiere }}</td>
                 <td>{{ product.price }}</td>
                 <td>{{ product.news ? 'Yes' : 'No' }}</td>
