@@ -16,6 +16,7 @@
                 <th>Matiere</th>
                 <th>Price</th>
                 <th>News</th>
+                <th>Promotion</th>
                 <th>Stock</th>
                 <th>actions</th>
             </tr>
@@ -30,7 +31,8 @@
                 <td>{{ product.matiere }}</td>
                 <td>{{ product.price }}</td>
                 <td>{{ product.news ? 'Yes' : 'No' }}</td>
-                <td>{{ product.stock }}</td>
+                <td>{{ product.promotion ? 'Yes' : 'No' }}</td>
+                <td>{{ product.stock ? 'Yes' : 'No' }}</td>
                 <td>
                     <a href="{{ path('app_products_show', {'id': product.id}) }}" class="btn btn-sm btn-primary">show</a>
                     <a href="{{ path('app_products_edit', {'id': product.id}) }}" class="btn btn-sm btn-warning">edit</a>

@@ -56,7 +56,7 @@ class Products
     private $news;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="boolean")
      * @Groups({"get_products"})
      */
     private $stock;
@@ -80,6 +80,12 @@ class Products
      * @Groups({"get_products"})
      */
     private $slug;
+
+    /**
+     * @ORM\Column(type="boolean")
+     * @Groups({"get_products"})
+     */
+    private $promotion;
 
     public function getId(): ?int
     {
@@ -158,12 +164,12 @@ class Products
         return $this;
     }
 
-    public function getStock(): ?int
+    public function isStock(): ?bool
     {
         return $this->stock;
     }
 
-    public function setStock(int $stock): self
+    public function setStock(bool $stock): self
     {
         $this->stock = $stock;
 
@@ -202,6 +208,18 @@ class Products
     public function setSlug(?string $slug): self
     {
         $this->slug = $slug;
+
+        return $this;
+    }
+
+    public function isPromotion(): ?bool
+    {
+        return $this->promotion;
+    }
+
+    public function setPromotion(bool $promotion): self
+    {
+        $this->promotion = $promotion;
 
         return $this;
     }

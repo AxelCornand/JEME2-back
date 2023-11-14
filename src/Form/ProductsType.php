@@ -52,10 +52,17 @@ class ProductsType extends AbstractType
                     'class' => 'checkbox-inline',
                 ],
             ])
-            ->add('stock', IntegerType::class,[
-                'label' => 'stock',
-                'help' => 'Un nombre strictement positif',
-                'empty_data' => 0,
+            ->add('stock', ChoiceType::class, [
+                'choices' => [
+                    'oui' => true,
+                    'non' => false,
+                ],
+                'multiple' => false,
+                'expanded' => true,
+                'label' => 'Stock',
+                'label_attr' => [
+                    'class' => 'checkbox-inline',
+                ],
             ])
             ->add('category', EntityType::class, [
                 'class' => Category::class,
@@ -73,6 +80,18 @@ class ProductsType extends AbstractType
                 'choice_label' => 'name',
                 'multiple' => false,
                 'expanded' => true,
+                'label_attr' => [
+                    'class' => 'checkbox-inline',
+                ],
+            ])
+            ->add('promotion', ChoiceType::class, [
+                'choices' => [
+                    'oui' => true,
+                    'non' => false,
+                ],
+                'multiple' => false,
+                'expanded' => true,
+                'label' => 'promotion',
                 'label_attr' => [
                     'class' => 'checkbox-inline',
                 ],

@@ -47,4 +47,18 @@ class ProductsController extends AbstractController {
             ['groups' => 'get_products']
         );
     }
+
+    // /**
+    //  * @Route("StockProductsList", name="stock_product", methods={"GET"})
+    //  */
+    // public function stockProductsJson(ProductsRepository $productsRepository): Response
+    // {
+    //     $stockProductsList = $productsRepository->findBy(['stock'=> true]);
+    //     return $this->json(
+    //         $stockProductsList,
+    //         200,
+    //         [],
+    //         ['groups' => 'get_products']
+    //     );
+    // }
 }
