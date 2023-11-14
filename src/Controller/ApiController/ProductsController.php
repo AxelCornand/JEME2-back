@@ -3,10 +3,13 @@
 namespace App\Controller\ApiController;
 
 use App\Repository\ProductsRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 /**
  * @Route("/api/", name="app_api_")
@@ -45,6 +48,49 @@ class ProductsController extends AbstractController {
             200,
             [],
             ['groups' => 'get_products']
+        );
+    }
+     /**
+     * @Route("categorie/productList", name="categorie_productList", methods={"GET","POST"})
+     */
+    public function getProductFromCategory(Request $request, ProductsRepository $productsRepository, EntityManagerInterface $entityManager): JsonResponse
+    {
+        // Recovery of json informations sent by the front
+        $data = json_decode($request->getContent(), true);
+        
+        // Check error reading Json
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            throw new BadRequestHttpException('json invalide');
+        }
+        // Check if the ingredient name exists
+        if (!(isset($data['category']) && isset($data['category'][0]['name']))) {
+            throw new BadRequestHttpException('json need catégory nodes with name');
+        }
+
+        // Only use the name in the array $data
+        /** @var string[] $categoryNames */
+        $categoryNames = array_map(
+            fn(array $category) => $category['name'],
+            $data['category']
+        );
+
+        // Find product containing the category names
+        $product = $productsRepository->findByCategoryName($categoryNames, $entityManager);
+
+        // Return Json of all recipe for one or many ingredients to the front
+        return $this->json(
+            // All recipes of the ingredient convert in Json
+            $product,
+            // The status code 200
+            JsonResponse::HTTP_OK,
+            // The header
+            [],
+            // Element group for recipe
+            [
+                'groups' => [
+                    'get_products',
+                ],
+            ]
         );
     }
 

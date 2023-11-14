@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Products;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManagerInterface;
 
 /**
  * @extends ServiceEntityRepository<Products>
@@ -37,6 +38,41 @@ class ProductsRepository extends ServiceEntityRepository
         if ($flush) {
             $this->getEntityManager()->flush();
         }
+    }
+    /**
+     * Retrieves products for a given category (DQL)
+     * @param stings[] $categoryNames
+     *
+     * @return Products[]
+     */
+    public function findByCategoryName(array $categoryNames, EntityManagerInterface $entityManager): array
+    {
+        $products = [];
+        // Research for each request
+        foreach ($categoryNames as $categoryName) {
+            $query = $entityManager->createQuery('SELECT p
+                FROM App\Entity\Products p
+                INNER JOIN App\Entity\Category c WITH p.id = c.products
+                WHERE c.name LIKE :categoryName');
+    
+            $query->setParameter('categoryName', '%'.$categoryName.'%');
+    
+            // Execute the query and get the result
+            $result = $query->getResult();
+    
+            // If $products is empty, add the result
+            if (empty($products)) {
+                $products = $result;
+            } else {
+                // Remove products that do not have the current category
+                foreach ($products as $key => $product) {
+                    if (!in_array($product, $result)) {
+                        unset($products[$key]);
+                    }
+                }
+            }
+        }
+        return array_values($products);
     }
 
 
