@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ProductsRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -15,25 +17,25 @@ class Products
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"get_products","get_cart"})
+     * @Groups({"get_products","get_cart","get_order"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=64)
-     * @Groups({"get_products","get_cart"})
+     * @Groups({"get_products","get_cart","get_order"})
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"get_products","get_cart"})
+     * @Groups({"get_products","get_cart","get_order"})
      */
     private $poster;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"get_products","get_cart"})
+     * @Groups({"get_products","get_cart","get_order"})
      */
     private $description;
 
@@ -45,7 +47,7 @@ class Products
 
     /**
      * @ORM\Column(type="float")
-     * @Groups({"get_products","get_cart"})
+     * @Groups({"get_products","get_cart","get_order"})
      */
     private $price;
 
@@ -77,7 +79,7 @@ class Products
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"get_products"})
+     * @Groups({"get_products","get_order"})
      */
     private $slug;
 
@@ -86,6 +88,16 @@ class Products
      * @Groups({"get_products"})
      */
     private $promotion;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Orderdetails::class, mappedBy="products")
+     */
+    private $orderdetails;
+
+    public function __construct()
+    {
+        $this->orderdetails = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -220,6 +232,36 @@ class Products
     public function setPromotion(bool $promotion): self
     {
         $this->promotion = $promotion;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Orderdetails>
+     */
+    public function getOrderdetails(): Collection
+    {
+        return $this->orderdetails;
+    }
+
+    public function addOrderdetail(Orderdetails $orderdetail): self
+    {
+        if (!$this->orderdetails->contains($orderdetail)) {
+            $this->orderdetails[] = $orderdetail;
+            $orderdetail->setProducts($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOrderdetail(Orderdetails $orderdetail): self
+    {
+        if ($this->orderdetails->removeElement($orderdetail)) {
+            // set the owning side to null (unless already changed)
+            if ($orderdetail->getProducts() === $this) {
+                $orderdetail->setProducts(null);
+            }
+        }
 
         return $this;
     }

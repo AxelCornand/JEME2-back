@@ -62,7 +62,7 @@ class ProductsController extends AbstractController {
         if (json_last_error() !== JSON_ERROR_NONE) {
             throw new BadRequestHttpException('json invalide');
         }
-        // Check if the ingredient name exists
+        // Check if the category name exists
         if (!(isset($data['category']) && isset($data['category'][0]['name']))) {
             throw new BadRequestHttpException('json need catégory nodes with name');
         }
@@ -77,15 +77,15 @@ class ProductsController extends AbstractController {
         // Find product containing the category names
         $product = $productsRepository->findByCategoryName($categoryNames, $entityManager);
 
-        // Return Json of all recipe for one or many ingredients to the front
+        // Return Json of all product for one or many category to the front
         return $this->json(
-            // All recipes of the ingredient convert in Json
+            // All products of the category convert in Json
             $product,
             // The status code 200
             JsonResponse::HTTP_OK,
             // The header
             [],
-            // Element group for recipe
+            // Element group for product
             [
                 'groups' => [
                     'get_products',

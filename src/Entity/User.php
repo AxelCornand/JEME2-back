@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -51,6 +53,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @Groups({"get_users_list", "get_itemUser", "get_users_info"})
      */
     private $Lastname;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Orders::class, mappedBy="users")
+     */
+    private $orders;
+
+    public function __construct()
+    {
+        $this->orders = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -161,6 +173,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setLastname(string $Lastname): self
     {
         $this->Lastname = $Lastname;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Orders>
+     */
+    public function getOrders(): Collection
+    {
+        return $this->orders;
+    }
+
+    public function addOrder(Orders $order): self
+    {
+        if (!$this->orders->contains($order)) {
+            $this->orders[] = $order;
+            $order->setUsers($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOrder(Orders $order): self
+    {
+        if ($this->orders->removeElement($order)) {
+            // set the owning side to null (unless already changed)
+            if ($order->getUsers() === $this) {
+                $order->setUsers(null);
+            }
+        }
 
         return $this;
     }
