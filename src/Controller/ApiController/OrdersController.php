@@ -11,10 +11,15 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-#[Route('/api/commandes', name:'api_orders_')]
+/**
+* @Route("/api/commandes", name="api_orders_")
+*/
 class OrdersController extends AbstractController
 {
-    #[Route('/ajout', name:'add')]
+    
+    /**
+    * @Route("/ajout", name="add")
+    */
     public function add(SessionInterface $session, ProductsRepository $productsRepository, EntityManagerInterface $em): Response
     {
         $this->denyAccessUnlessGranted('ROLE_USER');

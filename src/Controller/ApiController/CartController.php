@@ -8,10 +8,14 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-#[Route('/api/cart', name: 'cart_')]
+/**
+ * @Route("/api/cart", name="cart_")
+ */
 class CartController extends AbstractController{
 
-    #[Route('/', name: 'index')]
+    /**
+     * @Route("/", name="index")
+     */
     public function index(SessionInterface $session, ProductsRepository $productsRepository)
     {
         $panier = $session->get('panier', []);
@@ -37,7 +41,9 @@ class CartController extends AbstractController{
         );
     }
 
-    #[Route('/add/{id}', name: 'add')]
+   /**
+    * @Route("/add/{id}", name="add")
+    */
     public function add(Products $product, SessionInterface $session)
     {
         $id =$product->getId();
@@ -60,7 +66,9 @@ class CartController extends AbstractController{
         );
     }
 
-    #[Route('/remove/{id}', name: 'remove')]
+    /**
+    * @Route("/remove/{id}", name="remove")
+    */
     public function remove(Products $product, SessionInterface $session)
     {
     $id = $product->getId();
@@ -85,7 +93,9 @@ class CartController extends AbstractController{
         );
     }
 
-    #[Route('/delete/{id}', name: 'delete')]
+    /**
+    * @Route("/delete/{id}", name="delete")
+    */
     public function delete(Products $product, SessionInterface $session)
     {
     $id = $product->getId();
