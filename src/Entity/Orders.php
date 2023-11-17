@@ -28,10 +28,9 @@ class Orders
      */
     private $users;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Orderdetails::class, mappedBy="orders")
-     * @Groups({"get_order"})
-     */
+    
+    #[ORM\OneToMany(mappedBy: 'orders', targetEntity: Orderdetails::class, orphanRemoval: true, cascade: ['persist'])]
+    #[Groups("get_order")]
     private $orderDetails;
 
     /**
@@ -39,6 +38,10 @@ class Orders
      * @Groups({"get_order"})
      */
     private $created_at;
+
+    #[ORM\Column(type: 'string', length: 20, unique: true)]
+    #[Groups("get_order")]
+    private $reference;
 
     public function __construct()
     {
@@ -100,6 +103,18 @@ class Orders
     public function setCreatedAt(\DateTimeInterface $created_at): self
     {
         $this->created_at = $created_at;
+
+        return $this;
+    }
+
+    public function getReference(): ?string
+    {
+        return $this->reference;
+    }
+
+    public function setReference(string $reference): self
+    {
+        $this->reference = $reference;
 
         return $this;
     }

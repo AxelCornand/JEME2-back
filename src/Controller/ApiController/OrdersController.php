@@ -3,108 +3,57 @@
 namespace App\Controller\ApiController;
 
 use App\Entity\Orders;
-use App\Entity\OrderDetails;
-use App\Repository\OrdersRepository;
+use App\Entity\Orderdetails;
 use App\Repository\ProductsRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
+#[Route('/api/commandes', name:'api_orders_')]
+class OrdersController extends AbstractController
+{
+    #[Route('/ajout', name:'add')]
+    public function add(SessionInterface $session, ProductsRepository $productsRepository, EntityManagerInterface $em): Response
+    {
+        $this->denyAccessUnlessGranted('ROLE_USER');
 
-/**
- * @Route("/api/commandes", name="app_api_commandes")
- */
-class OrdersController extends AbstractController{
+        $panier = $session->get('panier', []);
 
-    // /**
-    //  * @Route("/add/{id}", name:"add")
-    //  */
-    // public function add(SessionInterface $session, ProductsRepository $productsRepository, EntityManagerInterface $em): Response
-    // {
-    //     $this->denyAccessUnlessGranted('ROLE_USER');
+        if ($panier === []) {
+            $this->addFlash('message', 'Panier vide');
+        }
 
-    //     $panier = $session->get('panier', []);
-    //     $id = $productsRepository->getId();
-    //     $order = new Orders();
+        $order = new Orders();
 
-    //     $order->setUsers($this->getUser());
+        $order->setUsers($this->getUser());
+        $order->setReference(uniqid());
 
-    //     if(empty($panier[$id])){
-    //         $panier[$id] = 1;
-    //     }else{
-    //         $panier[$id]++;
-    //     }
+        foreach ($panier as $item => $quantity) {
+            $orderDetails = new Orderdetails();
 
-    //     foreach($panier as $item=> $quantity){
-    //         $orderDetails = new OrderDetails();
-        
+            $product = $productsRepository->find($item);
 
-    //     $product = $productsRepository->find($item);
-    //     $price = $product->getPrice();
+            $price = $product->getPrice();
 
-    //     $orderDetails->setProducts($product);
-    //     $orderDetails->setPrice($price);
-    //     $orderDetails->setQuantity($quantity);
-    //     $order->addOrderDetail($orderDetails);
-    //     }
+            $orderDetails->setProducts($product);
+            $orderDetails->setPrice($price);
+            $orderDetails->setQuantity($quantity);
 
-    //     $em->persist($order);
-    //     $em->flush();
+            $order->addOrderDetail($orderDetails);
+        }
 
+        $em->persist($order);
+        $em->flush();
 
-    //     return $this->json(
-    //         // All recipes of the ingredient convert in Json
-    //         $order,
-    //         // The status code 200
-    //         JsonResponse::HTTP_OK,
-    //         // The header
-    //         [],
-    //         // Element group for recipe
-    //         [
-    //             'groups' => [
-    //                 'get_order',
-    //             ],
-    //         ]
-    //     );
-    // }
-    // /**
-    //  * @Route("/remove/{id}", name:"remove")
-    //  */
-    // public function remove(SessionInterface $session,$id, ProductsRepository $productsRepository,OrdersRepository $ordersRepository, EntityManagerInterface $em)
-    // {
-    // $this->denyAccessUnlessGranted('ROLE_USER');
-
-    // $product = $productsRepository->find($id);
-    // $order = $ordersRepository->findOneBy(['user' => $this->getUser()]);
-
-    // if (!$order || !$product) {
-    //     $response = [
-    //         'success' => false,
-    //         'message' => 'Le produit ou le panier n\'existe pas.',
-    //     ];
-
-    //     return new JsonResponse($response, JsonResponse::HTTP_NOT_FOUND);
-    // }
-
-    // $em->persist($order);
-    // $em->flush();
-
-    // return $this->json(
-    //     // All recipes of the ingredient convert in Json
-    //     $order,
-    //     // The status code 200
-    //     JsonResponse::HTTP_OK,
-    //     // The header
-    //     [],
-    //     // Element group for recipe
-    //     [
-    //         'groups' => [
-    //             'get_order',
-    //         ],
-    //     ]
-    // );
-    // }
+        return $this->json(
+            $order,
+            200,
+            [],
+            ['groups' => 'get_order']
+        );
+        $session->remove('panier');
+    }
+    
 }
