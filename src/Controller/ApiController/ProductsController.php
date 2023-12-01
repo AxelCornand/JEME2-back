@@ -2,6 +2,7 @@
 
 namespace App\Controller\ApiController;
 
+use App\Repository\CategoryRepository;
 use App\Repository\ProductsRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -35,6 +36,15 @@ class ProductsController extends AbstractController {
             // Element group for categories
             ['groups' => 'get_products']
         );
+    }
+
+    /**
+     * @Route("CategoryList", name="category_list", methods={"GET"})
+     */
+    public function categoryListJson(CategoryRepository $categoryRepository)
+    {
+        $categoryList = $categoryRepository->findAll();
+        return $this->json($categoryList);
     }
 
     /**
@@ -94,17 +104,17 @@ class ProductsController extends AbstractController {
         );
     }
 
-    // /**
-    //  * @Route("StockProductsList", name="stock_product", methods={"GET"})
-    //  */
-    // public function stockProductsJson(ProductsRepository $productsRepository): Response
-    // {
-    //     $stockProductsList = $productsRepository->findBy(['stock'=> true]);
-    //     return $this->json(
-    //         $stockProductsList,
-    //         200,
-    //         [],
-    //         ['groups' => 'get_products']
-    //     );
-    // }
+    /**
+     * @Route("StockProductsList", name="stock_product", methods={"GET"})
+     */
+    public function stockProductsJson(ProductsRepository $productsRepository): Response
+    {
+        $stockProductsList = $productsRepository->findBy(['stock'=> true]);
+        return $this->json(
+            $stockProductsList,
+            200,
+            [],
+            ['groups' => 'get_products']
+        );
+    }
 }
