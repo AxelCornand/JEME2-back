@@ -44,7 +44,12 @@ class ProductsController extends AbstractController {
     public function categoryListJson(CategoryRepository $categoryRepository)
     {
         $categoryList = $categoryRepository->findAll();
-        return $this->json($categoryList);
+        return $this->json(
+            $categoryList,
+            200,
+            [],
+            ['groups' => 'get_category']
+        );
     }
 
     /**
