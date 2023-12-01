@@ -101,11 +101,7 @@ class ProductsController extends AbstractController {
             // The header
             [],
             // Element group for product
-            [
-                'groups' => [
-                    'get_products',
-                ],
-            ]
+            ['groups' => 'get_products']
         );
     }
 
