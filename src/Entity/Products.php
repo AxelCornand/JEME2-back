@@ -17,25 +17,25 @@ class Products
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"get_products","get_cart","get_order"})
+     * @Groups({"get_products"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=64)
-     * @Groups({"get_products","get_cart","get_order"})
+     * @Groups({"get_products"})
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"get_products","get_cart","get_order"})
+     * @Groups({"get_products"})
      */
     private $poster;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"get_products","get_cart","get_order"})
+     * @Groups({"get_products"})
      */
     private $description;
 
@@ -47,7 +47,7 @@ class Products
 
     /**
      * @ORM\Column(type="float")
-     * @Groups({"get_products","get_cart","get_order"})
+     * @Groups({"get_products"})
      */
     private $price;
 
@@ -79,7 +79,7 @@ class Products
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"get_products","get_order"})
+     * @Groups({"get_products"})
      */
     private $slug;
 
@@ -90,14 +90,16 @@ class Products
     private $promotion;
 
     /**
-     * @ORM\OneToMany(targetEntity=Orderdetails::class, mappedBy="products")
+     * @ORM\ManyToMany(targetEntity=Cart::class, mappedBy="products")
      */
-    private $orderdetails;
+    private $carts;
 
     public function __construct()
     {
-        $this->orderdetails = new ArrayCollection();
+        $this->carts = new ArrayCollection();
     }
+
+
 
     public function getId(): ?int
     {
@@ -237,32 +239,30 @@ class Products
     }
 
     /**
-     * @return Collection<int, Orderdetails>
+     * @return Collection<int, Cart>
      */
-    public function getOrderdetails(): Collection
+    public function getCarts(): Collection
     {
-        return $this->orderdetails;
+        return $this->carts;
     }
 
-    public function addOrderdetail(Orderdetails $orderdetail): self
+    public function addCart(Cart $cart): self
     {
-        if (!$this->orderdetails->contains($orderdetail)) {
-            $this->orderdetails[] = $orderdetail;
-            $orderdetail->setProducts($this);
+        if (!$this->carts->contains($cart)) {
+            $this->carts[] = $cart;
+            $cart->addProduct($this);
         }
 
         return $this;
     }
 
-    public function removeOrderdetail(Orderdetails $orderdetail): self
+    public function removeCart(Cart $cart): self
     {
-        if ($this->orderdetails->removeElement($orderdetail)) {
-            // set the owning side to null (unless already changed)
-            if ($orderdetail->getProducts() === $this) {
-                $orderdetail->setProducts(null);
-            }
+        if ($this->carts->removeElement($cart)) {
+            $cart->removeProduct($this);
         }
 
         return $this;
     }
+
 }

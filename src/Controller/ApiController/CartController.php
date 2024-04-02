@@ -2,118 +2,74 @@
 
 namespace App\Controller\ApiController;
 
-use App\Entity\Products;
+use App\Repository\CartRepository;
+use App\Repository\CategoryRepository;
 use App\Repository\ProductsRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 /**
- * @Route("/api/cart", name="cart_")
+ * @Route("/api/", name="app_api_")
  */
-class CartController extends AbstractController{
+class CartController extends AbstractController {
 
     /**
-     * @Route("/", name="index")
+     * @Route("cart", name="cart")
      */
-    public function index(SessionInterface $session, ProductsRepository $productsRepository)
+    public function index(CartRepository $cartRepository): Response
     {
-        $panier = $session->get('panier', []);
-
-        $data = [];
-        $total = 0.00;
-
-        foreach($panier as $id => $quantity){
-            $product = $productsRepository->find($id);
-
-            $data[]= [
-                'product' => $product,
-                'quantity' => $quantity
-            ];
-
-            $total += $product->getPrice() * $quantity;
-        }
-        return $this->json(
-            $panier,
-            200,
-            [],
-            ['groups' => 'get_order']
-        );
-    }
-
-   /**
-    * @Route("/add/{id}", name="add")
-    */
-    public function add(Products $product, SessionInterface $session)
-    {
-        $id =$product->getId();
-
-        $panier = $session->get('panier', []);
-
-        if(empty($panier[$id])){
-            $panier[$id] = 1;
-        }else{
-            $panier[$id]++;
-        }
-
-        $session->set('panier', $panier);
+        $cart = $cartRepository->findOneBy(['user' => $this->getUser(), 'status' => 'active']);
 
         return $this->json(
-            $panier,
+            $cart,
+            // The status code 200
             200,
+            // The header
             [],
-            ['groups' => 'get_order']
+            // Element group for users
+            ['groups' => 'get_cart']
         );
     }
 
     /**
-    * @Route("/remove/{id}", name="remove")
+     * @Route("commande/succes", name="commande_succes")
     */
-    public function remove(Products $product, SessionInterface $session)
+    public function cartSucces()
     {
-    $id = $product->getId();
-
-    $panier = $session->get('panier', []);
-
-    if(!empty($panier[$id])) {
-        if($panier[$id] > 1){
-        $panier[$id]--;
-    } else {
-        unset($panier[$id]);
-    }
-    }
-
-        $session->set('panier', $panier);
-
-        return $this->json(
-            $panier,
-            200,
-            [],
-            ['groups' => 'get_order']
-        );
+        return new Response('Commande reçu !');
     }
 
     /**
-    * @Route("/delete/{id}", name="delete")
-    */
-    public function delete(Products $product, SessionInterface $session)
+     * @Route("commande/cancel", name="commande_canceled")
+     */
+    public function cartCancel()
     {
-    $id = $product->getId();
+        return new Response('Commande annulée !');
+    }
 
-    $panier = $session->get('panier', []);
+     /**
+     * @Route("stripe/create/session", name="stripe_create_session", methods={"POST"})
+     */
+    public function stripeCreateSession(CartRepository $cartRepository)
+    {
+        $cart = $cartRepository->findOneBy(['user' => $this->getUser(), 'status' => 'active']);
 
-    if(!empty($panier[$id]))
-        {
-        unset($panier[$id]);
-        }
+        \Stripe\Stripe::setApiKey('TODO');
 
-        $session->set('panier', $panier);
+        $checkout_session = \Stripe\Checkout\Session::create([
+            'payment_method_types' => ['card'],
+            'line_items' => $cart->getStripeLineItems(),
+            'mode' => 'payment',
+            'success_url' => $this->generateUrl('cart_success', [], UrlGeneratorInterface::ABSOLUTE_URL),
+            'cancel_url' => $this->generateUrl('cart_canceled', [], UrlGeneratorInterface::ABSOLUTE_URL),
+        ]);
 
-        return $this->json(
-            $panier,
-            200,
-            [],
-            ['groups' => 'get_order']
-        );
+        return new JsonResponse(['id' => $checkout_session->id]);
     }
 }
