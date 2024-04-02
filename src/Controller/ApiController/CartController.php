@@ -36,40 +36,4 @@ class CartController extends AbstractController {
             ['groups' => 'get_cart']
         );
     }
-
-    /**
-     * @Route("commande/succes", name="commande_succes")
-    */
-    public function cartSucces()
-    {
-        return new Response('Commande reçu !');
-    }
-
-    /**
-     * @Route("commande/cancel", name="commande_canceled")
-     */
-    public function cartCancel()
-    {
-        return new Response('Commande annulée !');
-    }
-
-     /**
-     * @Route("stripe/create/session", name="stripe_create_session", methods={"POST"})
-     */
-    public function stripeCreateSession(CartRepository $cartRepository)
-    {
-        $cart = $cartRepository->findOneBy(['user' => $this->getUser(), 'status' => 'active']);
-
-        \Stripe\Stripe::setApiKey('TODO');
-
-        $checkout_session = \Stripe\Checkout\Session::create([
-            'payment_method_types' => ['card'],
-            'line_items' => $cart->getStripeLineItems(),
-            'mode' => 'payment',
-            'success_url' => $this->generateUrl('cart_success', [], UrlGeneratorInterface::ABSOLUTE_URL),
-            'cancel_url' => $this->generateUrl('cart_canceled', [], UrlGeneratorInterface::ABSOLUTE_URL),
-        ]);
-
-        return new JsonResponse(['id' => $checkout_session->id]);
-    }
 }
