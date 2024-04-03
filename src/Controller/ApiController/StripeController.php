@@ -3,9 +3,10 @@
 namespace App\Controller\ApiController;
 
 use Stripe\Stripe;
-use App\Entity\Cart;
-use Stripe\PaymentIntent;
+use App\Service\StripePayment;
+use App\Service\ProductService;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -15,44 +16,35 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
  */
 class StripeController extends AbstractController {
 
-    private $privateKey;
-
-    public function __construct()
-    {
-        if($_ENV['APP_ENV'] === 'dev'){
-            $this->privateKey = $_ENV['STRIPE_PUBLIC_KEY_TEST'];
-        } else {
-            $this->privateKey = $_ENV['STRIPE_PUBLIC_KEY_LIVE'];
-        }
-    }
 
     /**
      * @Route("create" , name="create" , methods={"POST"})
      */
-    public function createPayment(Request $request): JsonResponse
+    public function createPayment(Request $request, ProductService $productService, StripePayment $stripePayment): JsonResponse
     {
 
-        \Stripe\Stripe::setApiKey($this->privateKey);
+        $jsonData = $request->getContent();
+        $products = json_decode($jsonData, true);
 
-        $data = json_decode($request->getContent(), true);
-
-        $products = $data['products'];
-
-        function getTotal(array  $products): int
-        {
-            $total = 0;
-            foreach($products as $product){
-                $total += $product->getPrice();
-            }
-            return $total;
+        // Vérifier si les données JSON sont valides
+        if (!is_array($products) || empty($products)) {
+            return new Response('Données JSON invalides', 400);
         }
 
-        $payment = PaymentIntent::create([
-            'amount' => $products->getPrice() * 100,
-            'currency' => Cart::DEVISE,
-            'payment_method_types' => ['card'],
-        ]);
+        $total = $productService->getTotal($products);
 
-        return $this->json(['clientSecret' => $payment->client_secret]);
+        $currency = 'EUR';
+
+        // Traiter le paiement via Stripe
+        $result = $stripePayment->processPayment($total, $currency);
+
+        // Gérer la réponse en fonction du résultat
+        if ($result instanceof \Stripe\Charge) {
+            // Paiement réussi
+            return new Response('Paiement réussi !');
+        } else {
+            // Erreur de paiement
+            return new Response('Erreur de paiement : ' . $result, 400);
+        }
     }
 }

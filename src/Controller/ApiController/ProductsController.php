@@ -2,6 +2,7 @@
 
 namespace App\Controller\ApiController;
 
+use App\Service\ProductService;
 use App\Repository\CategoryRepository;
 use App\Repository\ProductsRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -36,6 +37,22 @@ class ProductsController extends AbstractController {
             // Element group for categories
             ['groups' => 'get_products']
         );
+    }
+
+    /**
+     * @Route("/checkout", methods={"POST"})
+     */
+    public function checkout(Request $request, ProductService $productService)
+    {
+        $jsonData = json_decode($request->getContent(), true);
+        
+        // Suppose your JSON contains an array of products
+        $products = $jsonData['products'];
+        
+        // Pass the products to ProductService for further processing
+        $total = $productService->getTotal($products);
+
+        return new JsonResponse(['total_amount' => $total]);
     }
 
     /**
