@@ -28,7 +28,7 @@ class StripeController extends AbstractController {
 
         // Vérifier si les données JSON sont valides
         if (!is_array($products) || empty($products)) {
-            return new Response('Données JSON invalides', 400);
+            return new jsonResponse('Données JSON invalides', 400);
         }
 
         $total = $productService->getTotal($products);
@@ -41,10 +41,10 @@ class StripeController extends AbstractController {
         // Gérer la réponse en fonction du résultat
         if ($result instanceof \Stripe\Charge) {
             // Paiement réussi
-            return new Response('Paiement réussi !');
+            return new jsonResponse('Paiement réussi !');
         } else {
             // Erreur de paiement
-            return new Response('Erreur de paiement : ' . $result, 400);
+            return new jsonResponse('Erreur de paiement : ' . $result, 400);
         }
     }
 }

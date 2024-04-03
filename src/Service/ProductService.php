@@ -9,7 +9,7 @@ class ProductService
     {
         $total = 0;
         foreach ($products as $product) {
-            $total += $product->getPrice();
+            $total += $product['price'];
         }
         return $total;
     }

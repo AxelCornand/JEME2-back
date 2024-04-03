@@ -23,10 +23,9 @@ class StripePayment
 
         try {
             $charge = Charge::create([
-                'amount' => $amount * 100, 
+                'price' => $amount * 100, 
                 'currency' => Cart::DEVISE,
                 'payment_method_types' => ['card'],
-                'description' => 'Paiement via Stripe'
             ]);
 
             return $charge;
