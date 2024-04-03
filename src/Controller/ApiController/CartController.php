@@ -20,9 +20,9 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 class CartController extends AbstractController {
 
     /**
-     * @Route("cart", name="cart")
+     * @Route("cart", name="cart", methods={"GET"})
      */
-    public function index(CartRepository $cartRepository): Response
+    public function cartJson(CartRepository $cartRepository): Response
     {
         $cart = $cartRepository->findOneBy(['user' => $this->getUser(), 'status' => 'active']);
 

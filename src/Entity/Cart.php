@@ -59,14 +59,6 @@ class Cart
         return $this;
     }
 
-    public function getTotal(): int
-    {
-        $total = 0;
-        foreach($this->getProducts() as $product){
-            $total += $product->getPrice();
-        }
-        return $total;
-    }
 
     /**
      * @return Collection<int, Products>
